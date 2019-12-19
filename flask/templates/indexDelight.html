@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title>Commits and contributions</title>
+ <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	<script>
+	$(function() {
+		$( ".dtpick" ).datepicker();
+	});
+	</script>
+</head>
+<body>
+
+
+  <div class="container">
+
+      <div class="row">
+          <div class="col-lg">
+            <img src="{{url_for('static', filename=image)}}"></img>
+            <p>"start = {{starts}}"</p>
+          </div>
+          <div class="col">
+            <form  action="indexDelight.html" method="post">
+              <label for="starts">Start date: </label>
+              <input type="date" name="vizualisation_start" id="starts" min="2013-12-29" max="2019-12-20"/>
+              <label for="ends">End date: </label>
+              <input type="date" name="vizualisation_end" id="ends" min="2013-12-29" max="2019-12-20"/>
+              <p><input type="submit"  value="submit"/></p>
+            </form>
+          </div>
+      </div>
+
+      <div class="row">
+        <div class="row">
+          <div class="col-sm">
+            <img src="{{url_for('static', filename=image)}}"></img>
+          </div>
+          <div class="col-sm">
+            <img src="{{url_for('static', filename=image)}}"></img>
+          </div>
+          <div class="col-sm">
+            <img src="{{url_for('static', filename=image)}}"></img>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-sm">
+            <img src="{{url_for('static', filename=image)}}"></img>
+          </div>
+          <div class="col-sm">
+            <img src="{{url_for('static', filename=image)}}"></img>
+          </div>
+          <div class="col-sm">
+            <img src="{{url_for('static', filename=image)}}"></img>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-sm">
+            <img src="{{url_for('static', filename=image)}}"></img>
+          </div>
+          <div class="col-sm">
+            <img src="{{url_for('static', filename=image)}}"></img>
+          </div>
+          <div class="col-sm">
+            <img src="{{url_for('static', filename=image)}}"></img>
+          </div>
+
+        </div>
+
+
+        </div>
+
+    </div>
+
+
+
+</body>
+</html>
