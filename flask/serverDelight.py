@@ -53,7 +53,6 @@ def build_graph(x_coordinates_interval , y_coordinates , indiceName , title):
     return name
 
 def build_list_graphs(contribution_class, list_contributors , start_date, end_date):
-    log = open("loggi", "a")
 
     graphs = []
     max_graphs = 9
@@ -62,7 +61,6 @@ def build_list_graphs(contribution_class, list_contributors , start_date, end_da
         details_per_contributor = detail_contribution_in_period(index, start_date, end_date, contribution_class)
         graphs.append(build_graph([start_date, end_date], details_per_contributor, str(i), contribution_class.contributors[index][0]) )
 
-    log.close()
     return graphs
 
 
@@ -91,9 +89,6 @@ def total_contributions_in_period(start_week, end_week, contributors):
     #Sort the list of contributors depending on their sum of commits
     #So we can start inserting by contributors with higher commits
     #Each element of the table contains a tuple (index_of_contributor, Sum)
-    logCon = open("logcontr" , "w")
-    sentence = "start date ==> "+start_week+"  and en ==> "+end_week+""
-    logCon.write(sentence+"\n")
 
     result_contributors = []
     sum = 0
@@ -101,23 +96,16 @@ def total_contributions_in_period(start_week, end_week, contributors):
     timestamp_start = timestamp_from_date(""+start_week+" 00:00:00")
     timestamp_end = timestamp_from_date(""+end_week+" 00:00:00")
 
-    logCon.write("timestamp = "+str(timestamp_start))
-    logCon.write("timestamp end = "+str(timestamp_end))
 
     index_start = index_from_array(timestamp_start , contributors.weeks)
     index_end = index_from_array(timestamp_end , contributors.weeks)
-    logCon.write("boucle de 0 a "+str(len(contributors.contributors))+"\n")
     for i in range(0, len(contributors.contributors)):
         for j in range (index_start, index_end):
             sum = sum + contributors.details_participation[i][j][2]
         #append(index contributors, sum_of_his_contributions_in_period)
         result_contributors.append((contributors.contributors[i][2] , sum))
-        logCon.write(str(contributors.contributors[i][2])+" ==> ")
-        logCon.write(str(sum)+"\n")
         sum = 0
 
-    logCon.write(str(result_contributors))
-    logCon.close()
     return sort_table_contributors_descending(result_contributors)
 
 
@@ -180,14 +168,10 @@ def reset_object(class_to_reset):
     return class_to_reset
 
 def format_File(fileTitle):
-    logFormat = open("logFormat" , "a")
     file = open(fileTitle , "r")
     data = json.load(file)
-    logFormat.write("data loaded taille = "+str(len(data))+"\n")
     data_to_class = Formatted_data()
     data_to_class = reset_object(data_to_class)
-    logFormat.write("taille de classe = "+str(len(data_to_class.contributors))+"\n")
-    print("taille data = "+str(len(data[0]["weeks"])))
     weeks_list = []
     contributors = []
     week_details = []
@@ -216,7 +200,6 @@ def format_File(fileTitle):
     for i in range(0, data_to_class.total_weeks):
         data_to_class.weeks.append(data[0]["weeks"][i]["w"])
     file.close()
-    logFormat.write("cette fois jai lu "+str(len(data_to_class.contributors))+"\n")
     return data_to_class
 
 def get_total_Commits(contributors):
@@ -234,7 +217,7 @@ def get_total_Commits(contributors):
 def index():
     nameFile = "contributors_list.json"
     file = open(nameFile, "w")
-
+    log = open("log", "w")
     response_contributors = requests.get('https://api.github.com/repos/Facebook/react/stats/contributors', params={'q': 'requests+language:python'},headers={'Accept': "application/vnd.github.cloak-preview" , 'Accept' : 'application/vnd.github.v3+json'})
 
     file.write(response_contributors.text)
@@ -255,28 +238,24 @@ def index():
     #count percentages of contributions
     total = total_commits_in_period(list_contributors)
     percentages = contributors_percentages(data_to_class, list_contributors, total)
-
+    log.write("le total de commits dans la période "+str(start_date)+" => "+str(end_date)+"= "+str(total_commits))
     return render_template("index.html" , image = image , image1 = graphs[0], image2 = graphs[1], image3 = graphs[2], image4 = graphs[3], image5 = graphs[4], image6 = graphs[5], image7 = graphs[6], image8 = graphs[7], image9 = graphs[8] , p1=percentages[0], p2=percentages[1], p3=percentages[2], p4=percentages[3], p5=percentages[4], p6=percentages[5], p7=percentages[6], p8=percentages[7], p9=percentages[8])
 
 
 @app.route("/indexDelight.html" , methods=['post', 'get'])
 def contributions():
 
-    logFile = open("log", "w")
+
     nameFile = "contributors_list.json"
     data_to_class = format_File(nameFile)
-    logFile.write("lentgh of contributors is   =  "+str(len(data_to_class.contributors))+"\n \n \n")
     starts = request.form["vizualisation_start"]
     ends = request.form["vizualisation_end"]
     start_date = first_sunday_from_day(starts).strftime("%Y-%m-%d")
     end_date = first_sunday_from_day(ends).strftime("%Y-%m-%d")
 
     sentence = "start date ==> "+start_date+"  and en ==> "+end_date+""
-    logFile.write(sentence)
 
     list_contributors = total_contributions_in_period(start_date, end_date, data_to_class)
-    logFile.write(str(list_contributors))
-    logFile.close()
     graphs = build_list_graphs(data_to_class, list_contributors, start_date, end_date)
 
     total_commits = get_total_Commits(data_to_class)
