@@ -16,7 +16,14 @@ os <br>
 <br>
 <br>
 <br>
+**Lancement du monitoring**<br>
+Il suffit d'executer le script via la commande **sh crontab_scheduling.sh**<br>
+Le script va extraire les données de la veille chaque matin à 09h00 et remonter l'information si le nombre de commit est inférieur à 2<br>
+ces informations seront dans le fichier log
 
+<br>
+<br>
+<br>
 **Flask** <br>
 Pour extraires les données, les formatter puis les utiliser. <br>
 Pour cela il faut lancer un script pour lancer l'environnement virtuel et installer les différentes librairies utilisées pour le projet <br><br><br>
@@ -44,5 +51,18 @@ calendar<br>
     *Le pourcentage de chaque contributeur dans ce total de commits<br>
     *On trace alors le graphe total + un graphe par contributeur pour la période précisée<br>
     *Les graphes seront dans le dossier static, ils seront aussi affichés dans une page web en utilisant **flask**<br><br>
+    
+**Lancemenet de l'api** <br>
+Une fois le projet cloné, il faut executer le script.sh en utilisant la commance **source script.sh** ce qui va lancer l'environnement virtuel puis installer les différences dépendances nécessaires pour l'api. <br> <br>
+
+Puis lancer avec la commance **python3 serverDeight.py**
+<br>
+<br>
+<br>
+Le port pour regarder les résultats sera 5000 => localhost:5000
+<br>
+Malheureusement une erreur de synchronisation s'est produite, donc au début vous aurez les différents résultat pour la période(création - maintenant)
+<br>
+Mais quand on choisit les dates par le input, ça ne rend pas les nouveaux tableaux **Je travaille sur ça pour le moment** Mais vous pouvez quand même visualiser les différents graphe dans le dossier static comme vous pouvez lire les différents résultats dans le dossier **logFile**<br><br>
 
 
