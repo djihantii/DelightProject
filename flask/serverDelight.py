@@ -1,7 +1,6 @@
-from flask import Flask, render_template, request, json, url_for
+from flask import Flask, render_template, request, json, url_for, redirect
 import requests
 import json
-from flask_accept import accept
 import matplotlib.pyplot as plt
 import pandas as pd
 import matplotlib.ticker as ticker
@@ -13,9 +12,6 @@ import time
 from matplotlib.dates import MO, TU, WE, TH, FR, SA, SU
 import os
 import io
-from flask_bootstrap import Bootstrap
-from flask_wtf import FlaskForm
-from wtforms.fields import DateField
 import calendar
 
 app = Flask(__name__)
@@ -57,6 +53,8 @@ def build_graph(x_coordinates_interval , y_coordinates , indiceName , title):
     return name
 
 def build_list_graphs(contribution_class, list_contributors , start_date, end_date):
+    log = open("loggi", "a")
+
     graphs = []
     max_graphs = 9
     for i in range(0, max_graphs):
@@ -64,6 +62,7 @@ def build_list_graphs(contribution_class, list_contributors , start_date, end_da
         details_per_contributor = detail_contribution_in_period(index, start_date, end_date, contribution_class)
         graphs.append(build_graph([start_date, end_date], details_per_contributor, str(i), contribution_class.contributors[index][0]) )
 
+    log.close()
     return graphs
 
 
@@ -94,24 +93,37 @@ def total_contributions_in_period(start_week, end_week, contributors):
     #Each element of the table contains a tuple (index_of_contributor, Sum)
     logCon = open("logcontr" , "w")
     sentence = "start date ==> "+start_week+"  and en ==> "+end_week+""
-    logCon.write(sentence)
+    logCon.write(sentence+"\n")
 
     result_contributors = []
     sum = 0
+
     timestamp_start = timestamp_from_date(""+start_week+" 00:00:00")
     timestamp_end = timestamp_from_date(""+end_week+" 00:00:00")
+
+    logCon.write("timestamp = "+str(timestamp_start))
+    logCon.write("timestamp end = "+str(timestamp_end))
+
     index_start = index_from_array(timestamp_start , contributors.weeks)
     index_end = index_from_array(timestamp_end , contributors.weeks)
-
+    logCon.write("boucle de 0 a "+str(len(contributors.contributors))+"\n")
     for i in range(0, len(contributors.contributors)):
         for j in range (index_start, index_end):
             sum = sum + contributors.details_participation[i][j][2]
+        #append(index contributors, sum_of_his_contributions_in_period)
         result_contributors.append((contributors.contributors[i][2] , sum))
+        logCon.write(str(contributors.contributors[i][2])+" ==> ")
+        logCon.write(str(sum)+"\n")
         sum = 0
 
-    logCon.write(str(sort_table_contributors_descending(result_contributors)))
+    logCon.write(str(result_contributors))
     logCon.close()
     return sort_table_contributors_descending(result_contributors)
+
+
+def percentage_contribution(total_commits_in_period, commits_per_individual):
+
+    return (commits_per_individual/total_commits_in_period)*100
 
 def detail_contribution_in_period(contributor_index, start_date , end_date , contributors):
     #For a given contributor in a precised period we give the list of his commits
@@ -127,6 +139,19 @@ def detail_contribution_in_period(contributor_index, start_date , end_date , con
 
     return details
 
+def total_commits_in_period(list_contributors):
+    sum = 0
+    for i in range(0, len(list_contributors)):
+        sum = sum + list_contributors[i][1]
+
+    return sum
+
+def contributors_percentages(data_to_class , list_contributors, total_commits):
+    percentages = []
+    for i in range(0, len(list_contributors)):
+        login = list_contributors[i][0]
+        percentages.append((str(percentage_contribution(total_commits, list_contributors[i][1])) , data_to_class.contributors[login][0]))
+    return percentages
 
 def data_for_graphs(data_list_contributors , quantity):
     commits = []
@@ -135,7 +160,7 @@ def data_for_graphs(data_list_contributors , quantity):
         contributors.append(data_list_contributors[0][i])
         commits.append(data_list_contributors[1][i])
 
-    return((contributors , commits))
+    return(contributors , commits)
 
 def first_sunday_from_day(dateWeek):
     d = date.fromisoformat(dateWeek)
@@ -145,12 +170,23 @@ def first_sunday_from_day(dateWeek):
 
     return d
 
+def reset_object(class_to_reset):
+    class_to_reset.contributors=[]
+    class_to_reset.total_commits=[]
+    class_to_reset.weeks=[]
+    class_to_reset.details_participation=[]
+    class_to_reset.total_weeks=0
+
+    return class_to_reset
 
 def format_File(fileTitle):
+    logFormat = open("logFormat" , "a")
     file = open(fileTitle , "r")
     data = json.load(file)
-
+    logFormat.write("data loaded taille = "+str(len(data))+"\n")
     data_to_class = Formatted_data()
+    data_to_class = reset_object(data_to_class)
+    logFormat.write("taille de classe = "+str(len(data_to_class.contributors))+"\n")
     print("taille data = "+str(len(data[0]["weeks"])))
     weeks_list = []
     contributors = []
@@ -180,7 +216,7 @@ def format_File(fileTitle):
     for i in range(0, data_to_class.total_weeks):
         data_to_class.weeks.append(data[0]["weeks"][i]["w"])
     file.close()
-
+    logFormat.write("cette fois jai lu "+str(len(data_to_class.contributors))+"\n")
     return data_to_class
 
 def get_total_Commits(contributors):
@@ -216,8 +252,11 @@ def index():
     list_contributors = total_contributions_in_period(start_date, end_date, data_to_class)
     graphs = build_list_graphs(data_to_class, list_contributors, start_date, end_date)
 
+    #count percentages of contributions
+    total = total_commits_in_period(list_contributors)
+    percentages = contributors_percentages(data_to_class, list_contributors, total)
 
-    return render_template("index.html" , image = image , image1 = graphs[0], image2 = graphs[1], image3 = graphs[2], image4 = graphs[3], image5 = graphs[4], image6 = graphs[5], image7 = graphs[6], image8 = graphs[7], image9 = graphs[8])
+    return render_template("index.html" , image = image , image1 = graphs[0], image2 = graphs[1], image3 = graphs[2], image4 = graphs[3], image5 = graphs[4], image6 = graphs[5], image7 = graphs[6], image8 = graphs[7], image9 = graphs[8] , p1=percentages[0], p2=percentages[1], p3=percentages[2], p4=percentages[3], p5=percentages[4], p6=percentages[5], p7=percentages[6], p8=percentages[7], p9=percentages[8])
 
 
 @app.route("/indexDelight.html" , methods=['post', 'get'])
@@ -226,11 +265,12 @@ def contributions():
     logFile = open("log", "w")
     nameFile = "contributors_list.json"
     data_to_class = format_File(nameFile)
-
+    logFile.write("lentgh of contributors is   =  "+str(len(data_to_class.contributors))+"\n \n \n")
     starts = request.form["vizualisation_start"]
     ends = request.form["vizualisation_end"]
     start_date = first_sunday_from_day(starts).strftime("%Y-%m-%d")
     end_date = first_sunday_from_day(ends).strftime("%Y-%m-%d")
+
     sentence = "start date ==> "+start_date+"  and en ==> "+end_date+""
     logFile.write(sentence)
 
@@ -245,14 +285,18 @@ def contributions():
     repo_now = date_from_timestamp(data_to_class.weeks[-1])
 
     image = build_graph([repo_creation, repo_now],total_commits , "Total", "Total_activity" )
+    # time.sleep(20)
 
-    return render_template('indexDelight.html' , image=image , image1 = graphs[0], image2 = graphs[1], image3 = graphs[2], image4 = graphs[3], image5 = graphs[4], image6 = graphs[5], image7 = graphs[6], image8 = graphs[7], image9 = graphs[8])
+    total = total_commits_in_period(list_contributors)
+    percentages = contributors_percentages(data_to_class, list_contributors, total)
+
+    return render_template('indexDelight.html' , image=image , image1 = graphs[0], image2 = graphs[1], image3 = graphs[2], image4 = graphs[3], image5 = graphs[4], image6 = graphs[5], image7 = graphs[6], image8 = graphs[7], image9 = graphs[8],p1=percentages[0], p2=percentages[1], p3=percentages[2], p4=percentages[3], p5=percentages[4], p6=percentages[5], p7=percentages[6], p8=percentages[7], p9=percentages[8])
 if __name__ == '__main__':
 
-
+    #
     # nameFile = "contributors_list.json"
     # data_to_class = format_File(nameFile)
-    # start_date = first_sunday_from_day('2019-10-29').strftime("%Y-%m-%d")
+    # start_date = first_sunday_from_day('2017-06-02').strftime("%Y-%m-%d")
     # end_date = first_sunday_from_day('2019-12-20').strftime("%Y-%m-%d")
     # sentence = "start date ==> "+start_date+"  and en ==> "+end_date+""
     #
