@@ -92,6 +92,10 @@ def total_contributions_in_period(start_week, end_week, contributors):
     #Sort the list of contributors depending on their sum of commits
     #So we can start inserting by contributors with higher commits
     #Each element of the table contains a tuple (index_of_contributor, Sum)
+    logCon = open("logcontr" , "w")
+    sentence = "start date ==> "+start_week+"  and en ==> "+end_week+""
+    logCon.write(sentence)
+
     result_contributors = []
     sum = 0
     timestamp_start = timestamp_from_date(""+start_week+" 00:00:00")
@@ -105,6 +109,8 @@ def total_contributions_in_period(start_week, end_week, contributors):
         result_contributors.append((contributors.contributors[i][2] , sum))
         sum = 0
 
+    logCon.write(str(sort_table_contributors_descending(result_contributors)))
+    logCon.close()
     return sort_table_contributors_descending(result_contributors)
 
 def detail_contribution_in_period(contributor_index, start_date , end_date , contributors):
@@ -135,7 +141,7 @@ def first_sunday_from_day(dateWeek):
     d = date.fromisoformat(dateWeek)
 
     while d.weekday() != 6:
-        d +=timedelta(days=1)
+        d -=timedelta(days=1)
 
     return d
 
@@ -191,12 +197,12 @@ def get_total_Commits(contributors):
 @app.route("/" , methods=['post' , 'get'])
 def index():
     nameFile = "contributors_list.json"
-    # file = open(nameFile, "w")
+    file = open(nameFile, "w")
 
-    # response_contributors = requests.get('https://api.github.com/repos/Facebook/react/stats/contributors', params={'q': 'requests+language:python'},headers={'Accept': "application/vnd.github.cloak-preview" , 'Accept' : 'application/vnd.github.v3+json'})
+    response_contributors = requests.get('https://api.github.com/repos/Facebook/react/stats/contributors', params={'q': 'requests+language:python'},headers={'Accept': "application/vnd.github.cloak-preview" , 'Accept' : 'application/vnd.github.v3+json'})
 
-    # file.write(response_contributors.text)
-    # file.close()
+    file.write(response_contributors.text)
+    file.close()
 
     data_to_class = format_File(nameFile)
     start_date = date_from_timestamp(data_to_class.weeks[0])
@@ -211,17 +217,54 @@ def index():
     graphs = build_list_graphs(data_to_class, list_contributors, start_date, end_date)
 
 
-    return render_template("index.html" , image = image , image1 = graphs[0], image2 = graphs[1], image3 = graphs[2], image4 = graphs[3])
+    return render_template("index.html" , image = image , image1 = graphs[0], image2 = graphs[1], image3 = graphs[2], image4 = graphs[3], image5 = graphs[4], image6 = graphs[5], image7 = graphs[6], image8 = graphs[7], image9 = graphs[8])
 
 
 @app.route("/indexDelight.html" , methods=['post', 'get'])
 def contributions():
 
+    logFile = open("log", "w")
+    nameFile = "contributors_list.json"
+    data_to_class = format_File(nameFile)
+
     starts = request.form["vizualisation_start"]
     ends = request.form["vizualisation_end"]
+    start_date = first_sunday_from_day(starts).strftime("%Y-%m-%d")
+    end_date = first_sunday_from_day(ends).strftime("%Y-%m-%d")
+    sentence = "start date ==> "+start_date+"  and en ==> "+end_date+""
+    logFile.write(sentence)
 
-    return render_template('indexDelight.html' , image="myFigTotal" , starts = starts)
+    list_contributors = total_contributions_in_period(start_date, end_date, data_to_class)
+    logFile.write(str(list_contributors))
+    logFile.close()
+    graphs = build_list_graphs(data_to_class, list_contributors, start_date, end_date)
+
+    total_commits = get_total_Commits(data_to_class)
+
+    repo_creation = date_from_timestamp(data_to_class.weeks[0])
+    repo_now = date_from_timestamp(data_to_class.weeks[-1])
+
+    image = build_graph([repo_creation, repo_now],total_commits , "Total", "Total_activity" )
+
+    return render_template('indexDelight.html' , image=image , image1 = graphs[0], image2 = graphs[1], image3 = graphs[2], image4 = graphs[3], image5 = graphs[4], image6 = graphs[5], image7 = graphs[6], image8 = graphs[7], image9 = graphs[8])
 if __name__ == '__main__':
 
+
+    # nameFile = "contributors_list.json"
+    # data_to_class = format_File(nameFile)
+    # start_date = first_sunday_from_day('2019-10-29').strftime("%Y-%m-%d")
+    # end_date = first_sunday_from_day('2019-12-20').strftime("%Y-%m-%d")
+    # sentence = "start date ==> "+start_date+"  and en ==> "+end_date+""
+    #
+    # list_contributors = total_contributions_in_period(start_date, end_date, data_to_class)
+    #
+    # graphs = build_list_graphs(data_to_class, list_contributors, start_date, end_date)
+    #
+    # total_commits = get_total_Commits(data_to_class)
+    #
+    # repo_creation = date_from_timestamp(data_to_class.weeks[0])
+    # repo_now = date_from_timestamp(data_to_class.weeks[-1])
+    #
+    # image = build_graph([repo_creation, repo_now],total_commits , "Total", "Total_activity" )
 
     app.run(debug=True)
