@@ -3,10 +3,10 @@ Test technique
 Les deux projets sont indépendants.
 
 **Monitoring**
-Chaque jour ça extrait les commits du jour d'avant et calcule le nombre.
-Pour le moniroting je me suis basée sur le crontab de linux pour planifier l'extraction de données
-la source de données est 'https://api.github.com/repos/Facebook/commits?since=DATE_D_HIER'
-le script.sh sert à programmer alors le crontab.
+Chaque jour ça extrait les commits du jour d'avant et calcule le nombre. <br>
+Pour le moniroting je me suis basée sur le crontab de linux pour planifier l'extraction de données <br>
+la source de données est 'https://api.github.com/repos/Facebook/commits?since=DATE_D_HIER' <br>
+le script.sh sert à programmer alors le crontab. <br>
 
 __Dependances__
 requests
