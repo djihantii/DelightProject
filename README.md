@@ -33,6 +33,7 @@ ces informations seront dans le fichier log
 <br>
 Pour extraires les données, les formatter puis les utiliser. <br>
 Pour cela il faut lancer un script pour lancer l'environnement virtuel et installer les différentes librairies utilisées pour le projet via la commande ==> (source script.sh) <br><br><br>
+Si le script ne fonctionne pas comme souhaité, vous pouvez installer les dépendances vous même et activer l'environnement via la commande (source bin/activate)
 __Les librairires sont__
 <br>
 flask<br>
