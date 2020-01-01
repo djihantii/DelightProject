@@ -60,9 +60,7 @@ Puis lancer avec la commance **python3 serverDeight.py**
 <br>
 <br>
 Le port pour regarder les résultats sera 5000 => localhost:5000
-<br>
-Malheureusement une erreur de synchronisation s'est produite, donc au début vous aurez les différents résultat pour la période(création - maintenant)
-<br>
-Mais quand on choisit les dates par le input, ça ne rend pas les nouveaux tableaux **Je travaille sur ça pour le moment** Mais vous pouvez quand même visualiser les différents graphe dans le dossier static comme vous pouvez lire les différents résultats dans le dossier **logFile**<br><br>
+
+
 
 
