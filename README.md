@@ -19,7 +19,8 @@ os <br>
 <br>
 <br>
 <br>
-**Lancement du monitoring**<br>
+**Lancement du monitoring**
+<br>
 Il suffit d'executer le script via la commande **sh crontab_scheduling.sh**<br>
 Le script va extraire les données de la veille chaque matin à 09h00 et remonter l'information si le nombre de commit est inférieur à 2<br>
 ces informations seront dans le fichier log
@@ -27,10 +28,13 @@ ces informations seront dans le fichier log
 <br>
 <br>
 <br>
-**Flask** <br>
+
+**Flask** 
+<br>
 Pour extraires les données, les formatter puis les utiliser. <br>
-Pour cela il faut lancer un script pour lancer l'environnement virtuel et installer les différentes librairies utilisées pour le projet <br><br><br>
-__Les librairires sont__<br>
+Pour cela il faut lancer un script pour lancer l'environnement virtuel et installer les différentes librairies utilisées pour le projet via la commande ==> (source script.sh) <br><br><br>
+__Les librairires sont__
+<br>
 flask<br>
 requests<br>
 json<br>
@@ -42,7 +46,8 @@ os<br>
 io<br>
 calendar<br>
 <br><br><br><br>
-**Pour le fonctionnement de l'api**<br>
+**Pour le fonctionnement de l'api**
+<br>
   *On extrait les données de 'https://api.github.com/repos/Facebook/react/stats/contributors'<br>
   *En respectant les accept headers.<br>
   *On les formatte => En créant une classe et en affectant chaque type de donnée à son attribut<br>
