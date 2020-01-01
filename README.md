@@ -1,6 +1,9 @@
 # DelightProject
 Test technique
-Les deux projets sont indépendants.
+
+Pour le test j'ai pensé à le réaliser à ma façon, et donc j'ai fait deux parties.
+Les deux projets(monitoring et visualisation) sont réalisés indépendamment.
+
 
 **Monitoring**
 Chaque jour ça extrait les commits du jour d'avant et calcule le nombre. <br>
@@ -59,7 +62,7 @@ Puis lancer avec la commance **python3 serverDeight.py**
 <br>
 <br>
 <br>
-Le port pour regarder les résultats sera 5000 => localhost:5000
+Le port pour visualiser les résultats sera 5000 => localhost:5000
 
 
 
