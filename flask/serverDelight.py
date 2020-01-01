@@ -134,6 +134,7 @@ def detail_contribution_in_period(contributor_index, start_date , end_date , con
     return details
 
 def total_commits_in_period(list_contributors):
+    # Returns the sum of contributions in a given period
     sum = 0
     for i in range(0, len(list_contributors)):
         sum = sum + list_contributors[i][1]
@@ -148,6 +149,7 @@ def contributors_percentages(data_to_class , list_contributors, total_commits):
     return percentages
 
 def data_for_graphs(data_list_contributors , quantity):
+
     commits = []
     contributors = []
     for i in range(0, quantity):
@@ -157,6 +159,7 @@ def data_for_graphs(data_list_contributors , quantity):
     return(contributors , commits)
 
 def first_sunday_from_day(dateWeek):
+    # Since the week in Github countings starts with sunday, we return the last sunday from any given date
     d = date.fromisoformat(dateWeek)
 
     while d.weekday() != 6:
@@ -287,26 +290,8 @@ def contributions():
     total2 = total_commits_in_period(list_contributors2)
     percentages2 = contributors_percentages(data_to_class2, list_contributors2, total2)
     writePercentages(percentages2)
-    return render_template('indexDelight.html' ,today = today, image=image2 , imagein1 = graphs2[0], image2 = graphs2[1], image3 = graphs2[2], image4 = graphs2[3], image5 = graphs2[4], image6 = graphs2[5], image7 = graphs2[6], image8 = graphs2[7], image9 = graphs2[8],p1=percentages2[0], p2=percentages2[1], p3=percentages2[2], p4=percentages2[3], p5=percentages2[4], p6=percentages2[5], p7=percentages2[6], p8=percentages2[7], p9=percentages2[8] , messages = "rani nersell")
+    return render_template('indexDelight.html' ,today = today, image=image2 , imagein1 = graphs2[0], image2 = graphs2[1], image3 = graphs2[2], image4 = graphs2[3], image5 = graphs2[4], image6 = graphs2[5], image7 = graphs2[6], image8 = graphs2[7], image9 = graphs2[8],p1=percentages2[0], p2=percentages2[1], p3=percentages2[2], p4=percentages2[3], p5=percentages2[4], p6=percentages2[5], p7=percentages2[6], p8=percentages2[7], p9=percentages2[8] )
 
 if __name__ == '__main__':
-
-    #
-    # nameFile = "contributors_list.json"
-    # data_to_class = format_File(nameFile)
-    # start_date = first_sunday_from_day('2017-06-02').strftime("%Y-%m-%d")
-    # end_date = first_sunday_from_day('2019-12-20').strftime("%Y-%m-%d")
-    # sentence = "start date ==> "+start_date+"  and en ==> "+end_date+""
-    #
-    # list_contributors = total_contributions_in_period(start_date, end_date, data_to_class)
-    #
-    # graphs = build_list_graphs(data_to_class, list_contributors, start_date, end_date)
-    #
-    # total_commits = get_total_Commits(data_to_class)
-    #
-    # repo_creation = date_from_timestamp(data_to_class.weeks[0])
-    # repo_now = date_from_timestamp(data_to_class.weeks[-1])
-    #
-    # image = build_graph([repo_creation, repo_now],total_commits , "Total", "Total_activity" )
 
     app.run(debug=True)
