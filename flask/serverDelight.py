@@ -14,7 +14,9 @@ import os
 import io
 import calendar
 
+
 app = Flask(__name__)
+increment = 0
 
 class Formatted_data:
     contributors = []
@@ -48,8 +50,10 @@ def build_graph(x_coordinates_interval , y_coordinates , indiceName , title):
     else:
         ax.xaxis.set_major_locator(mdates.YearLocator())
 
-    name = "myFig"+indiceName+""
+    global increment
+    name = "myFig"+indiceName+str(increment)
     plt.savefig("static/"+name , format='png')
+    increment+=1
     return name
 
 def build_list_graphs(contribution_class, list_contributors , start_date, end_date):
@@ -63,7 +67,9 @@ def build_list_graphs(contribution_class, list_contributors , start_date, end_da
 
     return graphs
 
-
+def todayDate():
+    today = (date.today()).strftime("%Y-%m-%d")
+    return today
 
 def index_from_array(motif , array):
     for i in range(0, len(array)):
@@ -201,6 +207,15 @@ def format_File(fileTitle):
         data_to_class.weeks.append(data[0]["weeks"][i]["w"])
     file.close()
     return data_to_class
+def writePercentages(percentages):
+    namefile = "percentagesFile.txt"
+    log = open(namefile, "w")
+    for i in range(0, len(percentages)):
+        log.write(str(percentages[i][1])+" ==> ")
+        log.write(str(percentages[i][0])+"\n")
+
+    log.close()
+    return namefile
 
 def get_total_Commits(contributors):
     commits_per_week=[]
@@ -213,8 +228,11 @@ def get_total_Commits(contributors):
         sum = 0
     return commits_per_week
 
-@app.route("/" , methods=['post' , 'get'])
+@app.route("/" , methods=['POST' , 'GET'])
+
 def index():
+    today = todayDate()
+    print(str(today))
     nameFile = "contributors_list.json"
     file = open(nameFile, "w")
     log = open("log", "w")
@@ -239,37 +257,38 @@ def index():
     total = total_commits_in_period(list_contributors)
     percentages = contributors_percentages(data_to_class, list_contributors, total)
     log.write("le total de commits dans la période "+str(start_date)+" => "+str(end_date)+"= "+str(total_commits))
-    return render_template("index.html" , image = image , image1 = graphs[0], image2 = graphs[1], image3 = graphs[2], image4 = graphs[3], image5 = graphs[4], image6 = graphs[5], image7 = graphs[6], image8 = graphs[7], image9 = graphs[8] , p1=percentages[0], p2=percentages[1], p3=percentages[2], p4=percentages[3], p5=percentages[4], p6=percentages[5], p7=percentages[6], p8=percentages[7], p9=percentages[8])
+    return render_template("index.html" ,today = today, image = image , image1 = graphs[0], image2 = graphs[1], image3 = graphs[2], image4 = graphs[3], image5 = graphs[4], image6 = graphs[5], image7 = graphs[6], image8 = graphs[7], image9 = graphs[8] , p1=percentages[0], p2=percentages[1], p3=percentages[2], p4=percentages[3], p5=percentages[4], p6=percentages[5], p7=percentages[6], p8=percentages[7], p9=percentages[8])
 
 
-@app.route("/indexDelight.html" , methods=['post', 'get'])
+@app.route("/indexDelight.html" , methods=['POST', 'GET'])
 def contributions():
 
-
+    today = todayDate()
     nameFile = "contributors_list.json"
-    data_to_class = format_File(nameFile)
-    starts = request.form["vizualisation_start"]
-    ends = request.form["vizualisation_end"]
-    start_date = first_sunday_from_day(starts).strftime("%Y-%m-%d")
-    end_date = first_sunday_from_day(ends).strftime("%Y-%m-%d")
+    data_to_class2 = format_File(nameFile)
+    starts2 = request.form["vizualisation_start"]
+    ends2 = request.form["vizualisation_end"]
+    start_date2 = first_sunday_from_day(starts2).strftime("%Y-%m-%d")
+    end_date2 = first_sunday_from_day(ends2).strftime("%Y-%m-%d")
 
-    sentence = "start date ==> "+start_date+"  and en ==> "+end_date+""
+    sentence2 = "start date ==> "+start_date2+"  and en ==> "+end_date2+""
 
-    list_contributors = total_contributions_in_period(start_date, end_date, data_to_class)
-    graphs = build_list_graphs(data_to_class, list_contributors, start_date, end_date)
+    list_contributors2 = total_contributions_in_period(start_date2, end_date2, data_to_class2)
+    graphs2 = build_list_graphs(data_to_class2, list_contributors2, start_date2, end_date2)
 
-    total_commits = get_total_Commits(data_to_class)
+    total_commits2 = get_total_Commits(data_to_class2)
 
-    repo_creation = date_from_timestamp(data_to_class.weeks[0])
-    repo_now = date_from_timestamp(data_to_class.weeks[-1])
+    repo_creation2 = date_from_timestamp(data_to_class2.weeks[0])
+    repo_now2 = date_from_timestamp(data_to_class2.weeks[-1])
 
-    image = build_graph([repo_creation, repo_now],total_commits , "Total", "Total_activity" )
+    image2 = build_graph([repo_creation2, repo_now2],total_commits2 , "Total", "Total_activity" )
     # time.sleep(20)
 
-    total = total_commits_in_period(list_contributors)
-    percentages = contributors_percentages(data_to_class, list_contributors, total)
+    total2 = total_commits_in_period(list_contributors2)
+    percentages2 = contributors_percentages(data_to_class2, list_contributors2, total2)
+    writePercentages(percentages2)
+    return render_template('indexDelight.html' ,today = today, image=image2 , imagein1 = graphs2[0], image2 = graphs2[1], image3 = graphs2[2], image4 = graphs2[3], image5 = graphs2[4], image6 = graphs2[5], image7 = graphs2[6], image8 = graphs2[7], image9 = graphs2[8],p1=percentages2[0], p2=percentages2[1], p3=percentages2[2], p4=percentages2[3], p5=percentages2[4], p6=percentages2[5], p7=percentages2[6], p8=percentages2[7], p9=percentages2[8] , messages = "rani nersell")
 
-    return render_template('indexDelight.html' , image=image , image1 = graphs[0], image2 = graphs[1], image3 = graphs[2], image4 = graphs[3], image5 = graphs[4], image6 = graphs[5], image7 = graphs[6], image8 = graphs[7], image9 = graphs[8],p1=percentages[0], p2=percentages[1], p3=percentages[2], p4=percentages[3], p5=percentages[4], p6=percentages[5], p7=percentages[6], p8=percentages[7], p9=percentages[8])
 if __name__ == '__main__':
 
     #

@@ -17,17 +17,19 @@
 
 
 
-
+<div>
+  <p>message = {{messages}}</p>
+</div>
       <div class="container">
         <div class="col">
           <div class="row">
             <div class="col">
               <form  action="indexDelight.html" method="post">
                 <label for="starts">Start date: </label>
-                <input type="date" name="vizualisation_start" id="starts" min="2013-12-29" max="2019-12-20"/>
+                <input type="date" name="vizualisation_start" id="starts" min="2013-12-29" max={{today}}/>
                 <br>
                 <label for="ends">End date: </label>
-                <input type="date" name="vizualisation_end" id="ends" min="2013-12-29" max="2019-12-20"/>
+                <input type="date" name="vizualisation_end" id="ends" min="2013-12-29" max={{today}}/>
                 <p><input type="submit"  value="submit"/></p>
               </form>
 
@@ -41,7 +43,7 @@
 
               </div>
               <div class="col">
-                <p>Commits from the beginning</p>
+                <p>It is working :) </p>
 
               </div>
 
@@ -51,11 +53,12 @@
 
             <div class="row">
               <div class="col">
-                <img src="{{url_for('static', filename=image1)}}"></img>
+                <img src="{{url_for('static', filename=imagein1)}}"></img>
+
 
               </div>
               <div class="col">
-                <p>some details about the commiter</p>
+                <p>Contributors = {{p1[1]}} has {{p1[0]}} commits</p>
 
               </div>
 
@@ -68,7 +71,7 @@
 
             </div>
             <div class="col">
-              <p>some details about the commiter</p>
+              <p>Contributors = {{p2[1]}} has {{p2[0]}} commits</p>
             </div>
 
           </div>
@@ -78,7 +81,7 @@
 
             </div>
             <div class="col">
-              <p>some details about the commiter</p>
+              <p>Contributors = {{p3[1]}} has {{p3[0]}} commits</p>
             </div>
 
           </div>
@@ -88,7 +91,7 @@
 
             </div>
             <div class="col">
-              <p>some details about the commiter</p>
+              <p>Contributors = {{p4[1]}} has {{p4[0]}} commits</p>
             </div>
 
           </div>
@@ -98,7 +101,7 @@
 
             </div>
             <div class="col">
-              <p>some details about the commiter</p>
+              <p>Contributors = {{p5[1]}} has {{p5[0]}} commits</p>
             </div>
 
           </div>
@@ -108,7 +111,7 @@
 
             </div>
             <div class="col">
-              <p>some details about the commiter</p>
+              <p>Contributors = {{p6[1]}} has {{p6[0]}} commits</p>
             </div>
 
           </div>
@@ -118,7 +121,7 @@
 
             </div>
             <div class="col">
-              <p>some details about the commiter</p>
+              <p>Contributors = {{p7[1]}} has {{p7[0]}} commits</p>
             </div>
 
           </div>
@@ -128,7 +131,7 @@
 
             </div>
             <div class="col">
-              <p>some details about the commiter</p>
+              <p>Contributors = {{p8[1]}} has {{p8[0]}} commits</p>
             </div>
 
           </div>
@@ -138,7 +141,7 @@
 
             </div>
             <div class="col">
-              <p>some details about the commiter</p>
+              <p>Contributors = {{p9[1]}} has {{p9[0]}} commits</p>
             </div>
 
           </div>
